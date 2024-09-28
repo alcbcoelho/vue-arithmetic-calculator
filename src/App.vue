@@ -2,90 +2,114 @@
 import { reactive } from "vue";
 
 const state = reactive({
-  numbers: [0, 0],
+  numbers: [undefined, undefined],
   operation: "+",
-  result: 0,
 });
 
-const onChange = function(e) {
-  const index = (e.target.id === "number-1") ? 0 : 1;
+const onChange = function (e) {
+  const index = e.target.id === "number-1" ? 0 : 1;
   state.numbers[index] = +e.target.value;
 
   calculateResult();
-}
+};
 
-const onChangeSelect = function(e) {
+const onChangeSelect = function (e) {
   state.operation = e.target.value;
 
   calculateResult();
-}
+};
 
-const calculateResult = function() {
+const calculateResult = function () {
   const { numbers, operation } = state;
-  let calculation = (acc, num) => acc + num;
+  let calculation = (num1, num2) => num1 + num2;
 
   switch (operation) {
     case "+":
-      calculation = (acc, num) => acc + num;
+      calculation = (num1, num2) => num1 + num2;
       break;
     case "-":
-      calculation = (acc, num) => acc - num;
+      calculation = (num1, num2) => num1 - num2;
       break;
     case "x":
-      calculation = (acc, num) => acc * num;
+      calculation = (num1, num2) => num1 * num2;
       break;
     case "÷":
-      calculation = (acc, num) => acc / num;
+      calculation = (num1, num2) => num1 / num2;
   }
 
-  state.result = numbers.reduce(calculation);
-}
+  return numbers.reduce(calculation);
+};
 </script>
 
 <template>
-  <div class="main-content container p-4">
-    <div class="main-content__heading">
-      <h1 class="main-content__heading__title">Calculadora Aritmética</h1>
-      <span class="main-content__heading__subtitle">
-        <span>
-          Desenvolvida com <a href="https://vuejs.org/" target="_blank">Vue.js</a>
+  <div class="container px-0">
+    <div class="main-content p-4">
+      <div class="main-content__heading">
+        <h1 class="main-content__heading__title">Calculadora Aritmética</h1>
+        <span class="main-content__heading__subtitle">
+          <span>
+            Desenvolvida com
+            <a href="https://vuejs.org/" target="_blank">Vue.js</a>
+          </span>
         </span>
-      </span>
-    </div>
-    <div class="d-flex flex-column gap-4">
-      <div class="main-content__field-container w-25 m-auto">
-        <label for="operation" class="form-label">Operação</label>
-        <select id="operation" class="form-select" @change="onChangeSelect">
-          <option value="+">Adição</option>
-          <option value="-">Subtração</option>
-          <option value="x">Multiplicação</option>
-          <option value="÷">Divisão</option>
-        </select>
       </div>
-      <div class="position-relative">
-        <div class="number-binding"></div>
-        <div class="d-flex justify-content-center align-items-center gap-4">
-          <div class="main-content__field-container w-25">
-            <label for="number-1" class="form-label">Número 1</label>
-            <input id="number-1" class="form-control" type="number" placeholder="x" @change="onChange">
-          </div>
-          <div class="main-content__field-container__operation">
-            <span>
-              {{ state.operation }}
-            </span>
-          </div>
-          <div class="main-content__field-container w-25">
-            <label for="number-2" class="form-label">Número 2</label>
-            <input id="number-2" class="form-control" type="number" placeholder="y" @change="onChange">
+      <div class="d-flex flex-column gap-4">
+        <div class="main-content__field-container m-md-auto">
+          <label for="operation" class="form-label">Operação</label>
+          <select id="operation" class="form-select" @change="onChangeSelect">
+            <option value="+">Adição</option>
+            <option value="-">Subtração</option>
+            <option value="x">Multiplicação</option>
+            <option value="÷">Divisão</option>
+          </select>
+        </div>
+        <div class="position-relative">
+          <div class="number-binding"></div>
+          <div
+            class="d-md-flex justify-content-md-center align-items-md-center gap-4"
+          >
+            <div class="main-content__field-container">
+              <label for="number-1" class="form-label">Número 1</label>
+              <input
+                id="number-1"
+                class="form-control"
+                type="number"
+                placeholder="x"
+                @change="onChange"
+              />
+            </div>
+            <div class="main-content__field-container__operation">
+              <span>
+                {{ state.operation }}
+              </span>
+            </div>
+            <div class="main-content__field-container">
+              <label for="number-2" class="form-label">Número 2</label>
+              <input
+                id="number-2"
+                class="form-control"
+                type="number"
+                placeholder="y"
+                @change="onChange"
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div v-if="(!Number.isNaN(state.result))" class="main-content__result">{{ state.result }}</div>
-      <div v-else class="fw-bold">?</div>
+      <div v-if="Number.isNaN(calculateResult())" class="main-content__result">
+        ?
+      </div>
+      <div v-else class="main-content__result">
+        {{
+          Number.isInteger(calculateResult())
+            ? calculateResult()
+            : calculateResult().toFixed(4)
+        }}
+      </div>
     </div>
   </div>
-  <footer class="container">
-    <p class="fs-sm">&copy; 2024 - André Coêlho</p>
+  <footer class="container px-0">
+    <p>&copy; 2024 - André Coêlho</p>
   </footer>
 </template>
 
@@ -97,7 +121,7 @@ const calculateResult = function() {
 
 .main-content__heading {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 48px;
 }
 
 .main-content__heading__title,
@@ -110,7 +134,8 @@ const calculateResult = function() {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 16px;
+  font-size: 0.75rem;
   font-weight: 300;
   color: #213547bc;
 }
@@ -126,6 +151,7 @@ const calculateResult = function() {
 
 .main-content__field-container {
   position: relative;
+  width: 25%;
 }
 
 .main-content__field-container__operation {
@@ -143,6 +169,7 @@ const calculateResult = function() {
 }
 
 .number-binding {
+  display: block;
   position: absolute;
   top: 50%;
   left: 25%;
@@ -158,7 +185,7 @@ const calculateResult = function() {
 .main-content__result {
   position: relative;
   width: fit-content;
-  margin: 0 auto;
+  margin: 32px auto 0 auto;
   color: #2135475f;
   font-size: 4rem;
   font-weight: 800;
@@ -170,6 +197,39 @@ const calculateResult = function() {
   top: 25%;
   left: -32px;
   font-size: 2rem;
-  content: "= "
+  content: "= ";
+}
+
+@media screen and (max-width: 767px) {
+  .main-content__field-container {
+    width: 100%;
+  }
+
+  .number-binding {
+    display: block;
+    position: absolute;
+    top: 0%;
+    left: calc(50% - 1px);
+    height: 100%;
+    width: 1px;
+    background-color: #213547;
+  }
+
+  .main-content__heading {
+    margin-bottom: 32px;
+  }
+
+  .main-content__heading__subtitle::before,
+  .main-content__heading__subtitle::after {
+    width: 12.5%;
+  }
+
+  .main-content__field-container__operation {
+    margin: 16px auto;
+  }
+
+  .main-content__result {
+    margin-top: 16px;
+  }
 }
 </style>

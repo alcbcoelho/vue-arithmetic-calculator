@@ -54,5 +54,22 @@ footer {
 }
 
 footer p {
+    color: #ffffffbc;
     margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+    footer {
+        margin-top: 16px;
+    }
+
+    .form-control {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    body {
+        padding: 5%;
+    }
 }
